@@ -34,6 +34,17 @@ async function run(){
             console.log(services);
             res.send(services);
         });
+
+        //for add review
+        app.get('/services/addreview/:id', async(req, res) =>{
+            const id= req.params.id;
+            const query = {_id:ObjectId(id)};
+            const services = await serviceCollection.findOne(query);
+            console.log(services);
+            res.send(services);
+        });
+
+        
     }
     finally{
 
