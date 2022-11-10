@@ -5,7 +5,6 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-
 //middle wares
 app.use(cors());
 app.use(express.json());
@@ -55,6 +54,13 @@ async function run(){
         });
 
         //creating userReview api to the server
+        app.post('/reviews', async(req, res) =>{
+            const review = req.body;
+            const result = await orderedReviewCollection.insertOne(review);
+            res.send(result);
+        });
+
+        //for showing review based on users email
         app.get('/reviews', async(req, res) =>{
             let query = {};
             if(req.query.email){
@@ -67,18 +73,15 @@ async function run(){
             res.send(reviews);
         });
 
-        app.post('/reviews', async(req, res) =>{
-            const review = req.body;
-            const result = await orderedReviewCollection.insertOne(review);
-            res.send(result);
+        //for showing review based on review id
+        app.get('/servicesreviews/:id', async(req, res) =>{
+            // console.log(req.query.review);
+            const id = req.params.id;
+            let query = {serviceId:id};
+            const cursor = orderedReviewCollection.find(query);
+            const serviceReview = await cursor.toArray();
+            res.send(serviceReview);
         });
-
-        // //for myreview part
-        // app.post('/myreviews', async(req, res) =>{
-        //     const review = req.body;
-        //     const result = await orderedReviewCollection.insertOne(review);
-        //     res.send(result);
-        // });
 
         //for deletion
         app.delete('/reviews/:id', async(req, res) =>{
