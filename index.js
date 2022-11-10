@@ -75,7 +75,6 @@ async function run(){
 
         //for showing review based on review id
         app.get('/servicesreviews/:id', async(req, res) =>{
-            // console.log(req.query.review);
             const id = req.params.id;
             let query = {serviceId:id};
             const cursor = orderedReviewCollection.find(query);
@@ -83,13 +82,41 @@ async function run(){
             res.send(serviceReview);
         });
 
-        //for deletion
+        //for delete review
         app.delete('/reviews/:id', async(req, res) =>{
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
             const result = await orderedReviewCollection.deleteOne(query);
             res.send(result);
-        })
+        });
+
+        //for edit review
+        app.get('/reviews/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)};
+            const review = await orderedReviewCollection.findOne(query);
+            console.log(review);
+            res.send(review);
+        });
+        app.put('/reviews/:id', async(req, res) =>{
+            const id = req.params.id;
+            const newReview = req.body
+            const query = {_id:ObjectId(id)};
+            const options = {upsert: true};
+            const updatedDoc = {
+                $set: {
+                    serviceId: newReview.serviceId,
+                    reviewerName: newReview.reviewerName,
+                    email: newReview.email,
+                    image: newReview.image,
+                    message: newReview.message
+                }
+            }
+            const review = await orderedReviewCollection.updateOne(query, updatedDoc, options);
+            
+            console.log(review);
+            res.send(review);
+        });
 
         
     }
