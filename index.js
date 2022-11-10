@@ -22,6 +22,13 @@ async function run(){
         const orderedReviewCollection = client.db('tourReview').collection('reviews');
 
         //creating api for loading services data
+        app.get('/lim', async(req, res) =>{
+            const query = {};
+            const cursor = serviceCollection.find(query);
+            const services = await cursor.limit(3).toArray();
+            res.send(services);
+        });
+
         app.get('/services', async(req, res) =>{
             const query = {};
             const cursor = serviceCollection.find(query);
@@ -48,11 +55,38 @@ async function run(){
         });
 
         //creating userReview api to the server
+        app.get('/reviews', async(req, res) =>{
+            let query = {};
+            if(req.query.email){
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = orderedReviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        });
+
         app.post('/reviews', async(req, res) =>{
             const review = req.body;
             const result = await orderedReviewCollection.insertOne(review);
             res.send(result);
         });
+
+        // //for myreview part
+        // app.post('/myreviews', async(req, res) =>{
+        //     const review = req.body;
+        //     const result = await orderedReviewCollection.insertOne(review);
+        //     res.send(result);
+        // });
+
+        //for deletion
+        app.delete('/reviews/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await orderedReviewCollection.deleteOne(query);
+            res.send(result);
+        })
 
         
     }
