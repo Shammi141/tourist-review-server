@@ -68,7 +68,7 @@ async function run(){
                     email: req.query.email
                 }
             }
-            const cursor = orderedReviewCollection.find(query);
+            const cursor = orderedReviewCollection.find(query).sort({ time: -1 });
             const reviews = await cursor.toArray();
             res.send(reviews);
         });
@@ -77,7 +77,7 @@ async function run(){
         app.get('/servicesreviews/:id', async(req, res) =>{
             const id = req.params.id;
             let query = {serviceId:id};
-            const cursor = orderedReviewCollection.find(query);
+            const cursor = orderedReviewCollection.find(query).sort({ time: -1 });
             const serviceReview = await cursor.toArray();
             res.send(serviceReview);
         });
@@ -110,12 +110,20 @@ async function run(){
                     email: newReview.email,
                     image: newReview.image,
                     message: newReview.message
+
                 }
             }
             const review = await orderedReviewCollection.updateOne(query, updatedDoc, options);
             
             console.log(review);
             res.send(review);
+        });
+
+        //add service
+        app.post('/addservice', async(req, res) =>{
+            const service = req.body;
+            const result = await serviceCollection.insertOne(service);
+            res.send(result);
         });
 
         
