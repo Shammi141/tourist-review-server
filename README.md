@@ -1,7 +1,7 @@
 ## Tour & Tourist
 
 ## Live website link: 
-https://tour-and-tourist-7b2a4.web.app/
+https://tour-and-tourist-7b2a4.firebaseapp.com/
 
 
 ## About the project: 
